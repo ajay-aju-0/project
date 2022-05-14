@@ -98,4 +98,4 @@ def updateProfile(request):
             messages.error(request,"error while submitting")
             return render(request,'staffupdateprofile.html',context)
     else:
-        return redirect('owner_home')
+        return redirect('staff_home')
