@@ -119,3 +119,4 @@ def custChangePassword(request):
             messages.error(request,'passwords not matching,please re enter')
             return render(request,'custchangepassword.html')
         return redirect('login')
+    
