@@ -44,7 +44,7 @@ def order(request,id):
         prod.save()
         return HttpResponse('order placed')
     else:
-        return HttpResponse('hi')
+        return HttpResponse('error')
 
 # --------------------- Order Status -------------------
 
