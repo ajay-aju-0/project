@@ -1,0 +1,95 @@
+<head><title>customer list</title></head>
+{% extends 'shared/navbar.html' %}
+
+{% block display %}
+<br><br><br><br><br>
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table table-stripped">
+                    <tr>
+                        <th>name</th>
+                        <th>shipping address</th>
+                        <th>phone no.</th>
+                        <th>email id</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for i in cust %}
+                    {% if i.usertype == 'customer' %}
+                    <tr class="table-primary">
+                        <td>{{ i.first_name }}.{{ i.last_name }}</td>
+                        <td>{{ i.address }}</td>
+                        <td>{{ i.phone }}</td>
+                        <td>{{ i.email }}</td>
+                        <td><button class="btn btn-danger btn-block deactivate" id="{{i.id}}" data-catid="{{i.id}}">
+                        {% if i.is_active == True %}
+                        deactivate
+                        {% else %}
+                        activate
+                        {% endif %}
+                        </button></td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </table> 
+                   
+            </div>    
+        </div>
+    </div>
+
+    <script>
+        $('.deactivate').click(function(){
+          var id = $(this).attr('data-catid');
+        //   console.log(id);
+        //   data ={id:id,csrfmiddlewaretoken:$("input[name=csrfmiddlewaretoken]").val()}
+        //   console.log(JSON.stringify(data));
+          $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie != '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = jQuery.trim(cookies[i]);
+                            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                }
+                }
+            });
+
+            jQuery.ajax({
+                type:"POST",
+                url:"{% url 'owner_custchangestatus' %}",
+                data:{
+                      id:id,
+                      csrfmiddlewaretoken:$("input[name=csrfmiddlewaretoken]").val()
+                     },
+                success:function(dt){
+                    // console.log("success");
+                    // console.log(dt["active"]);
+                    // if(dt['success']==1){
+                        if(dt["active"]==1){
+                            // console.log("0")
+                            $('#'+id).html("deactivate");
+                            
+                        }
+                        else {
+                            // console.log("1")
+                            $('#'+id).html("activate");
+                        }
+                }
+            })
+      })
+      
+  </script>
+    
+    <br><br>
+{% endblock display %}
+    

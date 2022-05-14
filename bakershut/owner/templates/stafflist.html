@@ -1,0 +1,100 @@
+<head><title>staff list</title></head>
+{% extends 'shared/navbar.html' %}
+
+{% block display %}
+{% csrf_token %}
+<br><br><br><br><br>
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table table-stripped">
+                    <tr>
+                        <th>name</th>
+                        <th>address</th>
+                        <th>phone no.</th>
+                        <th>email id</th>
+                        <th>designation</th>
+                        <th>salary</th>
+                        <th>incentives</th>
+                        <th colspan="2" class="text-center">Action</th>
+                    </tr>
+                    {% for i in staff %}
+                    <tr class="table-primary">
+                        <td>{{ i.login.first_name }}.{{ i.login.last_name }}</td>
+                        <td>{{ i.login.address }}</td>
+                        <td>{{ i.login.phone }}</td>
+                        <td>{{ i.login.email }}</td>
+                        <td>{{ i.designation }}</td> 
+                        <td>{{ i.salary }}</td> 
+                        <td>{{ i.incentives }}</td> 
+                        <td><a href="{% url 'owner_updatestaff' id=i.id %}" class="btn btn-danger btn-block">update</a></td>
+                        <td><button class="btn btn-danger btn-block deactivate" id="{{i.login.id}}" data-catid="{{i.login.id}}">
+                            {% if i.login.is_active == False %}
+                            activate
+                            {% else %}
+                            deactivate
+                            {% endif %}   
+                        </button></td>
+                    </tr>
+                    {% endfor %}
+                </table>  
+            </div>
+        </div>
+    </div>
+  <script>
+        $('.deactivate').click(function(){
+          var id = $(this).attr('data-catid');
+        //   console.log(id);
+        //   data ={id:id,csrfmiddlewaretoken:$("input[name=csrfmiddlewaretoken]").val()}
+        //   console.log(JSON.stringify(data));
+          $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie != '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = jQuery.trim(cookies[i]);
+                            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                }
+                }
+            });
+
+            jQuery.ajax({
+                type:"POST",
+                url:"{% url 'owner_staffstatus' %}",
+                data:{
+                      id:id,
+                      csrfmiddlewaretoken:$("input[name=csrfmiddlewaretoken]").val()
+                     },
+                success:function(dt){
+                    // console.log("success");
+                    // console.log(dt["active"]);
+                    // if(dt['success']==1){
+                        if(dt["active"]==1){
+                            // console.log("0")
+                            $('#'+id).html("deactivate");
+                            
+                        }
+                        else {
+                            // console.log("1")
+                            $('#'+id).html("activate");
+                        }
+                }
+            })
+      })
+      
+      
+  </script>
+
+
+    <br><br>
+{% endblock display %}
