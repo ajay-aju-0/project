@@ -242,3 +242,4 @@ def updateProfile(request):
             return render(request,'updateprofile.html',context)
     else:
         return redirect('owner_home')
+    
